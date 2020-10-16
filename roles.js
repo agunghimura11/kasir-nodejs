@@ -1,20 +1,33 @@
-const AccessControl = require("accesscontrol");
-const ac = new AccessControl();
- 
-exports.roles = (function() {
-ac.grant("basic")
- .readOwn("profile")
- .updateOwn("profile")
- 
-ac.grant("supervisor")
- .extend("basic")
- .readAny("profile")
- 
-ac.grant("admin")
- .extend("basic")
- .extend("supervisor")
- .updateAny("profile")
- .deleteAny("profile")
- 
-return ac;
-})();
+// server/roles.js
+import AccessControl from "accesscontrol";
+
+// This is actually how the grants are maintained internally.
+let grantsObject = {
+    admin: {
+        video: {
+            'create:any': ['*', '!views'],
+            'read:any': ['*'],
+            'update:any': ['*', '!views'],
+            'delete:any': ['*']
+        }
+    },
+    user: {
+        video: {
+            'create:own': ['*', '!rating', '!views'],
+            'read:own': ['*'],
+            'update:own': ['*', '!rating', '!views'],
+            'delete:own': ['*']
+        }
+    },
+    kasir: {
+        video: {
+            'create:own': ['*', '!rating', '!views'],
+            'read:own': ['*'],
+            'update:own': ['*', '!rating', '!views'],
+            'delete:own': ['*']
+        }
+    }
+};
+const ac = new AccessControl(grantsObject);
+
+export default ac

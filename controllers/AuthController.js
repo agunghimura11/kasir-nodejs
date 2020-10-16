@@ -5,11 +5,13 @@ import User from './../models/userModel.js'
 
 import Conf from './../config.js'
 
+import roles from './../roles.js'
+
 // register new user
 function register(req, res) {
     try {
         var hashedPassword = bcrypt.hashSync(req.body.password, 8)
-        console.log(req.body)
+        
         User.create({
             username: req.body.username,
             lastname: req.body.lastname,
@@ -19,9 +21,9 @@ function register(req, res) {
         function (err, user) {
             if(err) throw(err)
 
-            var accessToken = jwt.sign({ id: user._id }, Conf.secret, {
+            var accessToken = jwt.sign({ userId: user._id }, Conf.secret, {
                 // 1 menit -> 60 second, 20 menit -> 1200 second
-                expiresIn : 1200 
+                expiresIn : 12000 
             })
     
             User.accessToken = accessToken
@@ -55,9 +57,9 @@ async function login(req, res, next) {
      
      if (!validPassword) return next(new Error('Password is not correct'))
      
-     var accessToken = jwt.sign({ id: user._id }, Conf.secret, {
+     var accessToken = jwt.sign({ userId: user._id }, Conf.secret, {
         // 1 menit -> 60 second, 20 menit -> 1200 second
-        expiresIn : 1200 
+        expiresIn : 12000 
      })
 
      await User.findByIdAndUpdate(user._id, { accessToken })
@@ -74,31 +76,39 @@ async function login(req, res, next) {
 function grantAccess(action, resource) {
     return async (req, res, next) => {
         try {
-        const permission = roles.can(req.user.role)[action](resource);
-        if (!permission.granted) {
-        return res.status(401).json({
-        error: "You don't have enough permission to perform this action"
-        });
-        }
-        next()
-        } catch (error) {
-        next(error)
-        }
+            const permission = roles.can(req.user.role)[action](resource);
+            if (!permission.granted) {
+                return res.status(401).json({
+                error: "You don't have enough permission to perform this action"
+            });
+            }
+                next()
+            } catch (error) {
+                next(error)
+            }
     }
 }
 
 async function AuthCheck(req, res, next){
     try {
-        const user = res.locals.loggedInUser;
+        const _id = res.locals.id
+        const user = await User.findOne({ _id })
         if (!user)
-        return res.status(401).json({
-        error: "You need to be logged in to access this route"
-        });
+            return res.status(401).json({
+                 error: "You need to be logged in to access this route"
+            });
         req.user = user;
+        console.log("data", req.user)
         next();
         } catch (error) {
         next(error);
         }
+}
+
+async function getOne(req,res,next){
+    await User.find({}, {role:1, _id:0}).lean().exec(function (users) {
+        return res.end(JSON.stringify(users));
+    })
 }
 
 export default { register, login, AuthCheck, grantAccess }

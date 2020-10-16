@@ -7,9 +7,6 @@ import UserController from './controllers/UserController.js'
 
 const routes = Router()
 
-routes.post('/signup', AuthController.register)
-routes.post('/login', AuthController.login)
-
-routes.get('/', AuthController.AuthCheck, UserController.getUser)
+routes.get('/', AuthController.AuthCheck, AuthController.grantAccess('readAny', 'video'), UserController.getUser)
 
 export default routes

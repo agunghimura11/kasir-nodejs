@@ -14,4 +14,56 @@ async function getUser (req, res){
     }
 }
 
-export default { getUser }
+// Update user data
+async function updateUser(req,res){
+    // json input { "id": "","username":"admin","password":"admin"}
+    const{
+        id,
+        username,
+        password
+    } = req.body;
+    
+    var saltRounds = 10 // total hash
+
+    const currentUser = await new Promise((resolve, reject)=>{ // new promise to do find by id user
+        User.findOne({"_id": id}, function(err, user){
+            if(err) reject(err) // if error send reject
+            resolve(user) // if success send resolve
+        })
+    })
+    if(currentUser){
+        currentUser.username = username
+        currentUser.password = await bcrypt.hash(password, saltRounds) // hash password
+
+        await currentUser.updateOne(function(err, user){
+            if(err) throw err
+            currentUser.save()
+            res.json({
+                data: currentUser,
+                message: 'Data Update Successfully'
+            })
+        })
+    }else{
+        res.status(404).json({ // return 404 if data not found
+            message: 'User not found'
+        })
+    }
+}
+
+// Delete field by id
+async function deleteUser (req, res) {
+    const currentUser = await User.findById(req.params.id) // awit for async find by id data
+
+    if(currentUser){ // if success remove data
+        await currentUser.remove()
+        res.json({
+            message: 'User removed successfully'
+        })
+    }else{
+        res.status(404).json({ // return 404 if data not found
+            message: 'User not found'
+        })
+    }
+}
+
+export default { getUser, deleteUser, updateUser }
