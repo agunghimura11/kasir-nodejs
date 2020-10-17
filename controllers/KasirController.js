@@ -72,7 +72,7 @@ async function UangKeluar(req,res){
 // Menampilkan seluruh log dari role kasir
 async function KasirLog(req,res){
     try{
-       
+       // cek data pada document user join document kasir where role = kasir
         User.aggregate([ 
             {
                 $match : 
@@ -93,7 +93,7 @@ async function KasirLog(req,res){
                     if(err) return res.status(500).send("Ambil uang gagal")
                 
                     res.json({
-                        message: user
+                        transaction: user
                 })
             })
     }catch(err){

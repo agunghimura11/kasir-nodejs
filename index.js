@@ -7,7 +7,6 @@ import bodyParser from 'body-parser'
 import routes from './routes.js'
 import auth from './auth.js'
 
-import User from './models/userModel.js'
 import jwt from 'jsonwebtoken'
 
 dotenv.config()
@@ -32,21 +31,24 @@ app.use(express.json())
 
 import Conf from './config.js'
 
+// route untuk auth
 app.use('/', auth)
+
+// Middleware untu cek token
 app.use((req, res, next) => {
     if (req.headers["x-access-token"]) {
         const accessToken = req.headers["x-access-token"];
         const { userId, exp } = jwt.verify(accessToken,  Conf.secret);
-        // Check if token has expired
+        // Jika token kadarluarsa
         if (exp < Date.now().valueOf() / 1000) { 
-        return res.status(401).json({ error: "JWT token has expired, please login to obtain a new one" });
+            return res.status(401).json({ error: "Jwt token kadarluarsa" });
         } 
         res.locals.id = userId;  next(); 
     } else { 
         next(); 
     } 
 });
-
+// router API
 app.use('/api', routes)
 
 app.listen(process.env.PORT, () => {

@@ -23,7 +23,7 @@ function register(req, res) {
 
             var accessToken = jwt.sign({ userId: user._id }, Conf.secret, {
                 // 1 menit -> 60 second, 20 menit -> 1200 second
-                expiresIn : 12000 
+                expiresIn : 3600 // 1 jam 
             })
     
             User.accessToken = accessToken
@@ -37,11 +37,12 @@ function register(req, res) {
        throw (error)
     }
 }
-
+// validasi password 
 async function validatePassword(plainPassword, hashedPassword) {
     return await bcrypt.compare(plainPassword, hashedPassword);
 }
 
+// login user untuk mendapatkan token
 async function login(req, res, next) {
     try {
      const { 
@@ -58,10 +59,11 @@ async function login(req, res, next) {
      if (!validPassword) return next(new Error('Password is not correct'))
      
      var accessToken = jwt.sign({ userId: user._id }, Conf.secret, {
-        // 1 menit -> 60 second, 20 menit -> 1200 second
-        expiresIn : 12000 
+        // 1 menit -> 60 second, 20 menit -> 1200 detik
+        expiresIn : 3600 // 1 jam 
      })
 
+     // Update token terbaru
      await User.findByIdAndUpdate(user._id, { accessToken })
 
      res.status(200).json({
@@ -73,6 +75,7 @@ async function login(req, res, next) {
     }
 }
 
+// untuk cek access role (action, resource). Role terdapat pada roles.js
 function grantAccess(action, resource) {
     return async (req, res, next) => {
         try {
@@ -89,12 +92,12 @@ function grantAccess(action, resource) {
                 });
             }
                 next()
-            } catch (error) {
-                next(error)
-            }
+        } catch (error) {
+            next(error)
+        }
     }
 }
-
+// cek apakah sudah login? id login didapat pada middleware get token
 async function AuthCheck(req, res, next){
     try {
         const _id = res.locals.id
@@ -104,17 +107,12 @@ async function AuthCheck(req, res, next){
                  error: "You need to be logged in to access this route"
             });
         req.user = user;
-        console.log("data", req.user)
+        
         next();
-        } catch (error) {
+    } catch (error) {
         next(error);
-        }
+    }
 }
 
-async function getOne(req,res,next){
-    await User.find({}, {role:1, _id:0}).lean().exec(function (users) {
-        return res.end(JSON.stringify(users));
-    })
-}
 
 export default { register, login, AuthCheck, grantAccess }

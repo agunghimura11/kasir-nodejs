@@ -1,7 +1,7 @@
 // server/roles.js
 import AccessControl from "accesscontrol";
 
-// This is actually how the grants are maintained internally.
+// object role
 let grantsObject = {
     bos: {
         Transaksi: {

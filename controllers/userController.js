@@ -86,7 +86,8 @@ async function updateUser(req,res){
 
 // Delete field by id
 async function deleteUser (req, res) {
-    const currentUser = await User.findById(req.params.id) // awit for async find by id data
+    
+    const currentUser = await User.findById(req.body.id) // awit for async find by id data
 
     if(currentUser){ // if success remove data
         await currentUser.remove()
