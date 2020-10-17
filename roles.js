@@ -9,6 +9,12 @@ let grantsObject = {
             'read:any': ['*'],
             'update:any': ['*', '!views'],
             'delete:any': ['*']
+        },
+        userData: {
+            'create:any': ['*', '!views'],
+            'read:any': ['*'],
+            'update:any': ['*', '!views'],
+            'delete:any': ['*']
         }
     },
     manager: {
@@ -17,10 +23,22 @@ let grantsObject = {
             'read:any': ['*'],
             'update:own': ['*', '!rating', '!views'],
             'delete:own': ['*']
+        },
+        userData: {
+            'create:own': ['*', '!rating', '!views'],
+            'read:any': ['*'],
+            'update:own': ['*', '!rating', '!views'],
+            'delete:own': ['*']
         }
     },
     kasir: {
         Transaksi: {
+            'create:own': ['*', '!rating', '!views'],
+            'read:own': ['*'],
+            'update:own': ['*', '!rating', '!views'],
+            'delete:own': ['*']
+        },
+        userData: {
             'create:own': ['*', '!rating', '!views'],
             'read:own': ['*'],
             'update:own': ['*', '!rating', '!views'],

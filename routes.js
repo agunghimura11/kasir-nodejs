@@ -9,7 +9,9 @@ import UserController from './controllers/UserController.js'
 const routes = Router()
 
 // User routes
-routes.get('/user', AuthController.AuthCheck, AuthController.grantAccess('readOwn', 'userData'), UserController.getUser)
+routes.get('/user', UserController.getUser, AuthController.grantAccess('readOwn', 'userData'), UserController.getUser)
+
+routes.post('/user/role', UserController.updateRole, AuthController.grantAccess('createAny', 'userData'), UserController.getUser)
 
 
 // Kasir routes
