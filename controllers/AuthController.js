@@ -76,11 +76,19 @@ async function login(req, res, next) {
 function grantAccess(action, resource) {
     return async (req, res, next) => {
         try {
+            if(!req.user.role){
+                return res.status(401).json({
+                    error: "Silahkan login terlebih dahulu"
+                });
+            }
+            console.log("role", req.user.role);
+            console.log("action", action);
+            console.log("resorce", resource);
             const permission = roles.can(req.user.role)[action](resource);
             if (!permission.granted) {
                 return res.status(401).json({
-                error: "You don't have enough permission to perform this action"
-            });
+                    error: "Tidak memiliki hak akses"
+                });
             }
                 next()
             } catch (error) {

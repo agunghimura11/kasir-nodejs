@@ -3,24 +3,24 @@ import AccessControl from "accesscontrol";
 
 // This is actually how the grants are maintained internally.
 let grantsObject = {
-    kasir: {
-        video: {
+    bos: {
+        Transaksi: {
             'create:any': ['*', '!views'],
             'read:any': ['*'],
             'update:any': ['*', '!views'],
             'delete:any': ['*']
         }
     },
-    user: {
-        video: {
+    manager: {
+        Transaksi: {
             'create:own': ['*', '!rating', '!views'],
-            'read:own': ['*'],
+            'read:any': ['*'],
             'update:own': ['*', '!rating', '!views'],
             'delete:own': ['*']
         }
     },
-    admin: {
-        video: {
+    kasir: {
+        Transaksi: {
             'create:own': ['*', '!rating', '!views'],
             'read:own': ['*'],
             'update:own': ['*', '!rating', '!views'],
