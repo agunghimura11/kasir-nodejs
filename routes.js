@@ -25,4 +25,7 @@ routes.post('/kasir/take', AuthController.AuthCheck, AuthController.grantAccess(
 // Menampilkan Laporan Transaksi, hanya dapat dilakukan Bos dengan Access 'readAny'
 routes.get('/kasir/report', AuthController.AuthCheck, AuthController.grantAccess('readAny','Transaksi'), KasirController.Laporan)
 
+// Menampilkan Laporan Transaksi, hanya dapat dilakukan Bos dengan Access 'readAny'
+routes.get('/kasir/logkasir', AuthController.AuthCheck, AuthController.grantAccess('readAny','Transaksi'), KasirController.KasirLog)
+
 export default routes

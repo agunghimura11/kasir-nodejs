@@ -1,3 +1,4 @@
+import User from '../models/userModel.js'
 import Kasir from './../models/kasirModel.js'
 
 // Cetak semua transaksi
@@ -48,10 +49,9 @@ async function UangMasuk(req,res){
     }
 }
 
-// Mengambil uang
+// Mengambil uang (Role Bos)
 async function UangKeluar(req,res){
     try{
-        
         Kasir.create({
             user_id: res.locals.id,
             uang_keluar: req.body.uang_keluar,
@@ -69,5 +69,36 @@ async function UangKeluar(req,res){
         res.status(500).json({ error: error })
     }
 }
+// Menampilkan seluruh log dari role kasir
+async function KasirLog(req,res){
+    try{
+       
+        User.aggregate([ 
+            {
+                $match : 
+                { 
+                    "role" : "kasir" 
+                }
+            },
+            {   
+                $lookup: 
+                {   
+                    "from": "kasirs", 
+                    "localField":"_id", 
+                    "foreignField":"user_id", 
+                    "as": "transaksi" 
+                },
+                
+           }], function (err,user){
+                    if(err) return res.status(500).send("Ambil uang gagal")
+                
+                    res.json({
+                        message: user
+                })
+            })
+    }catch(err){
+        res.status(500).json({ error: err })
+    }
+}
 
-export default { Laporan, UangMasuk, UangKeluar }
+export default { Laporan, UangMasuk, UangKeluar,KasirLog }

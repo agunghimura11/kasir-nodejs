@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 const kasirSchema = mongoose.Schema (
     {
         user_id : {
-            type: String,
+            type: mongoose.Schema.ObjectId,
             required: true,
         },
         uang_masuk : {
