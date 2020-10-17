@@ -81,9 +81,7 @@ function grantAccess(action, resource) {
                     error: "Silahkan login terlebih dahulu"
                 });
             }
-            console.log("role", req.user.role);
-            console.log("action", action);
-            console.log("resorce", resource);
+        
             const permission = roles.can(req.user.role)[action](resource);
             if (!permission.granted) {
                 return res.status(401).json({

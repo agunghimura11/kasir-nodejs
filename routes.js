@@ -13,6 +13,7 @@ routes.get('/user', UserController.getUser, AuthController.grantAccess('readOwn'
 
 routes.post('/user/role', UserController.updateRole, AuthController.grantAccess('createAny', 'userData'), UserController.getUser)
 
+routes.post('/user/update', UserController.updateUser, AuthController.grantAccess('createAny', 'userData'), UserController.getUser)
 
 // Kasir routes
 // Menambahkan uang pada proses Transaksi, hanya dapat dilakukan Kasir dan Manager dengan Access 'createOwn'

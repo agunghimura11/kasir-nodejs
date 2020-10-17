@@ -39,14 +39,6 @@ async function updateRole(req,res){
                 message: 'Role Update Successfully'
             })
         })
-        // await currentUser.updateOne(function(err, user){
-        //     if(err) throw err
-        //     currentUser.save()
-        //     res.json({
-        //         data: currentUser,
-        //         message: 'Role Update Successfully'
-        //     })
-        // })
     }else{
         res.status(404).json({ // return 404 if data not found
             message: 'User not found'
@@ -60,7 +52,9 @@ async function updateUser(req,res){
     const{
         id,
         username,
-        password
+        lastname,
+        password,
+        role
     } = req.body;
     
     var saltRounds = 10 // total hash
@@ -72,15 +66,15 @@ async function updateUser(req,res){
         })
     })
     if(currentUser){
-        currentUser.username = username
-        currentUser.password = await bcrypt.hash(password, saltRounds) // hash password
-
-        await currentUser.update({_id: id})(function(err, user){
+        User.updateOne({_id: id}, {
+            username: username,
+            lastname: lastname,
+            password: password,
+            role : role,
+        }, function(err, user){
             if(err) throw err
-            currentUser.save()
             res.json({
-                data: currentUser,
-                message: 'Data Update Successfully'
+                message: 'User Update Successfully'
             })
         })
     }else{
